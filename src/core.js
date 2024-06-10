@@ -30,11 +30,15 @@ export function calculateDiscount(price, discountCode) {
 export function validateUserInput(username, age) {
   let errors = [];
 
-  if (typeof username !== "string" || username.length < 3) {
+  if (
+    typeof username !== "string" ||
+    username.length < 3 ||
+    username.length > 40
+  ) {
     errors.push("Invalid username");
   }
 
-  if (typeof age !== "number" || age < 18) {
+  if (typeof age !== "number" || age < 18 || age > 110) {
     errors.push("Invalid age");
   }
 
@@ -123,7 +127,7 @@ export function createProduct(product) {
       error: { code: "invalid_name", message: "Name is missing" },
     };
 
-  if (product.price <= 0)
+  if (product.price <= 0 || !product.price)
     return {
       success: false,
       error: { code: "invalid_price", message: "Price is missing" },

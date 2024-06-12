@@ -3,6 +3,7 @@ import { getExchangeRate } from "./libs/currency";
 import { isValidEmail, sendEmail } from "./libs/email";
 import { charge } from "./libs/payment";
 import security from "./libs/security";
+
 import { getShippingQuote } from "./libs/shipping";
 
 // Lesson: Mocking modules
@@ -57,7 +58,7 @@ export function isOnline() {
   const [open, close] = availableHours;
   const currentHour = new Date().getHours();
 
-  return currentHour >= open && currentHour <= close;
+  return currentHour >= open && currentHour < close;
 }
 
 // Exercise

@@ -1,7 +1,9 @@
 import { vi, it, expect, describe } from "vitest";
 import {
+  getDiscount,
   getPriceInCurrency,
   getShippingInfo,
+  isOnline,
   renderPage,
   signUp,
   submitOrder,
@@ -11,6 +13,7 @@ import { getShippingQuote } from "../libs/shipping";
 import { trackPageView } from "../libs/analytics";
 import { charge } from "../libs/payment";
 import { isValidEmail, sendEmail } from "../libs/email";
+import { security } from "../libs/security";
 
 vi.mock("../libs/currency.js");
 vi.mock("../libs/shipping.js");
@@ -109,13 +112,46 @@ describe("signUp", () => {
   });
 
   it("should return true if the email is valid", async () => {
-    vi.mocked(sendEmail).mockResolvedValue(true);
+    const result = await signUp(email);
 
-    const result = await sendEmail(email);
-    const args = vi.mocked(sendEmail).mock.calls[0];
-
-    expect(result).toBe(true);
-    expect(args[0]).toBe(email);
     expect(sendEmail).toHaveBeenCalled();
+    const args = vi.mocked(sendEmail).mock.calls[0];
+    expect(args[0]).toBe(email);
+    expect(args[1]).toMatch(/welcome/i);
+  });
+});
+
+describe("isOnline", () => {
+  it("should return false if curent hour if is between 8 && 20", () => {
+    vi.setSystemTime("2024-01-01 07:59");
+    expect(isOnline()).toBe(false);
+
+    vi.setSystemTime("2024-01-01 20:01");
+    expect(isOnline()).toBe(false);
+  });
+  it("shouldreturn true if current hour is within opening hours", () => {
+    vi.setSystemTime("2024-01-01 08:00");
+    expect(isOnline()).toBe(true);
+
+    vi.setSystemTime("2024-01-01 13:00");
+    expect(isOnline()).toBe(true);
+
+    vi.setSystemTime("2024-01-01 19:59");
+    expect(isOnline()).toBe(true);
+  });
+});
+
+describe("getDiscount", () => {
+  it("should return no discount if is not Christmas day", () => {
+    vi.setSystemTime("2024-01-01 13:00");
+    expect(getDiscount()).toBe(0);
+  });
+
+  it("should return discount if today is Christmas day", () => {
+    vi.setSystemTime("2024-12-25 00:01");
+    expect(getDiscount()).toBe(0.2);
+
+    vi.setSystemTime("2024-12-25 23:59");
+    expect(getDiscount()).toBe(0.2);
   });
 });

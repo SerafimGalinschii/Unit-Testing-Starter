@@ -5,16 +5,16 @@ export function max(a, b) {
 
 // Exercise
 export function fizzBuzz(n) {
-  if (n % 3 === 0 && n % 5 === 0) return "FizzBuzz";
-  if (n % 3 === 0) return "Fizz";
-  if (n % 5 === 0) return "Buzz";
+  if (n % 3 === 0 && n % 5 === 0) return 'FizzBuzz';
+  if (n % 3 === 0) return 'Fizz';
+  if (n % 5 === 0) return 'Buzz';
   return n.toString();
 }
 
 export function calculateAverage(numbers = []) {
   if (numbers.length === 0) return NaN;
-  return numbers[0];
-  let result = numbers.reduce((sum, curentValue) => sum + curentValue, 0);
+
+  const sum = numbers.reduce((sum, curentValue) => sum + curentValue, 0);
   return sum / numbers.length;
 }
 
